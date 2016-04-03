@@ -18,7 +18,7 @@
 16. > activemq.bat start
 17. http://localhost:8161/admin/ - admin admin
 18. dodajemy do pom : 
-
+```
      <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-jms</artifactId>
@@ -27,39 +27,40 @@
             <groupId>org.apache.activemq</groupId>
             <artifactId>activemq-broker</artifactId>
         </dependency>
+```
 
-
+```
      spring.activemq.broker-url=tcp://localhost:61616
      spring.activemq.user=admin
      spring.activemq.password=admin
-
+```
 
 19. dodajemy jmsclient
 
-@Component
-public class JmsClient {
-    private JmsTemplate jmsTemplate;
-    private ObjectMapper objectMapper;
-
-
-    @Autowired
-    public JmsClient(JmsTemplate jmsTemplate, ObjectMapper objectMapper) {
-        this.jmsTemplate = jmsTemplate;
-        this.objectMapper = objectMapper;
-    }
-    public void send(HolidayRequest request) throws JsonProcessingException {
-        String message = objectMapper.writeValueAsString(request);
-        MessageCreator messageCreator = new MessageCreator() {
-            @Override
-            public Message createMessage(Session session) throws JMSException {
-                return session.createTextMessage(message);
-            }
-        };
-        System.out.println("Sending a new message.");
-        jmsTemplate.send("mailbox-destination", messageCreator);
-    }
-}
-
+```
+     @Component
+     public class JmsClient {
+          private JmsTemplate jmsTemplate;
+          private ObjectMapper objectMapper;
+     
+          @Autowired
+         public JmsClient(JmsTemplate jmsTemplate, ObjectMapper objectMapper) {
+             this.jmsTemplate = jmsTemplate;
+             this.objectMapper = objectMapper;
+         }
+         public void send(HolidayRequest request) throws JsonProcessingException {
+             String message = objectMapper.writeValueAsString(request);
+             MessageCreator messageCreator = new MessageCreator() {
+                 @Override
+                 public Message createMessage(Session session) throws JMSException {
+                     return session.createTextMessage(message);
+                 }
+             };
+             System.out.println("Sending a new message.");
+             jmsTemplate.send("mailbox-destination", messageCreator);
+         }
+     }
+```
 
 
 20. Dodajemy @EnableJMS
@@ -68,7 +69,7 @@ public class JmsClient {
 23. Tworzymy własną reprezentacje holidayRequest
 24. public interface HolidayRequestRepo extends MongoRepository<HolidayRequest, String> {
 25. tworzymy jms receiver
-
+```
 @Component
 public class JmsReceiver {
     private ObjectMapper objectMapper;
@@ -89,12 +90,12 @@ public class JmsReceiver {
         holidayRequestRepo.save(request);
     }
 }
-
+```
 
 26. Podłączamy się do mongo baza test
 27. dodajemy HolidayRequestService z metodą count
 
-
+```
 @Component
 public class HolidayRequestServiceImpl implements HolidayRequestService {
     private final HolidayRequestRepo holidayRequestRepo;
@@ -110,18 +111,17 @@ public class HolidayRequestServiceImpl implements HolidayRequestService {
     public Long getRequestCount() {
         return holidayRequestRepo.count();
     }
-
 }
-
+```
 
 
 28. DODAJEMY ACURATOR
-
+```
      <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
      </dependency>
-
+```
 
 29. acurator 
         1. /health
@@ -133,7 +133,7 @@ public class HolidayRequestServiceImpl implements HolidayRequestService {
         7. /metrics
 
 30. Dodajemy własny healthIndicator :
-
+```
 @Component
 public class MyHealthIndicator implements HealthIndicator{
     @Override
@@ -141,7 +141,7 @@ public class MyHealthIndicator implements HealthIndicator{
         return Health.up().status(Status.UNKNOWN).build();
     }
 }
-
+```
 
 
 31. Dodajemy opis aplikacji :
@@ -165,12 +165,12 @@ counterService.increment("services.system.holidayService.invoked");
 
 http://www.crashub.org/1.3/reference.html
 
-
+```
      <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-remote-shell</artifactId>
      </dependency>
-
+```
 
 34. putty >> user@localhost 2000 
 
@@ -179,7 +179,7 @@ http://www.crashub.org/1.3/reference.html
 37. jvm heap
 38. shell.auth.simple.user.password=123
 39. właśny command
-
+```
 package commands
 
 import org.crsh.cli.Command
@@ -198,42 +198,39 @@ class requestCounterCommand {
         def requestEndpoint = beans.getBean(HolidayRequestService)
         return requestEndpoint.getRequestCount();
     }
-
 }
-
+```
 40. spring dev tools 
-
+```
      <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
      </dependency>
-
+```
 
 41. testowanie aplikacji :
-
-@RunWith(SpringJUnit4ClassRunner.class)
-@SpringApplicationConfiguration(classes = ClientApplication.class)
-@WebAppConfiguration
-public class HolidayRequestEndpointTest {
-
-
-    @Autowired
-    private WebApplicationContext webApplicationContext;
-    private MockMvc mockMvc;
-
-
-    @Before
-    public void setUp() throws Exception {
-        mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-    }
-
-
-    @Test
-    public void testGetEndpoint() throws Exception {
-        mockMvc.perform(MockMvcRequestBuilders.get("/request")).andExpect(MockMvcResultMatchers.status().isOk());
-    }
-}
-
+```
+     @RunWith(SpringJUnit4ClassRunner.class)
+     @SpringApplicationConfiguration(classes = ClientApplication.class)
+     @WebAppConfiguration
+     public class HolidayRequestEndpointTest {
+     
+         @Autowired
+         private WebApplicationContext webApplicationContext;
+         private MockMvc mockMvc;
+     
+         @Before
+         public void setUp() throws Exception {
+             mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+         }
+     
+     
+         @Test
+         public void testGetEndpoint() throws Exception {
+             mockMvc.perform(MockMvcRequestBuilders.get("/request")).andExpect(MockMvcResultMatchers.status().isOk());
+         }
+     }
+```
 
 
 
