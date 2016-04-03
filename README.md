@@ -1,23 +1,24 @@
 <h2> Spring Boot Workshop </h2>
 
-1. Tworzymy projekt SpringBootClient
-2. Omówić application.properties, pom, parent pom, dependencies pom - pokazać że każda wersja przychodzi z określonymi            wersjami zależności. Dzięki temu mamy pewność że wszystko działa i jest przetestowane ze sobą. 
-3. Wystartować aplikację - omówić co widać przy starcie. 
-4.  Tworzymy klase HolidayRequest 
-5. Tworzymy klasę holidayRequestRepo
-6. Tworzymy enpoint + get, add
-7. Odpalamy aplikację  - http://localhost:8080/request
-8. Odpalamy postmana robimy POST na /request - {"number":"1"}
-9. Co widzimy? nie musieliśmy konfigurować DS, transaction managera, wszytko jest skonfigurowane za nas przez springa
-10. jak to działa, wchodzimy w DataSourceAutoConfiguration, potem w EmbeddedDataSourceConfiguration 
-11. spring.h2.console.enabled=true    jdbc:h2:mem:testdb  
-12. pokazać jak on class condition i on bean condition
-13. ServerProperties, DataSourceProperties
-14. Dodajemy baner.txt + http://www.network-science.de/ascii/
-15. Instalujemy ActiveMq 
-16. > activemq.bat start
-17. http://localhost:8161/admin/ - admin admin
-18. dodajemy do pom : 
+- Tworzymy projekt SpringBootClient
+- Omówić application.properties, pom, parent pom, dependencies pom - pokazać że każda wersja przychodzi z określonymi            wersjami zależności. Dzięki temu mamy pewność że wszystko działa i jest przetestowane ze sobą. 
+- Wystartować aplikację - omówić co widać przy starcie. 
+-  Tworzymy klase HolidayRequest 
+- Tworzymy klasę holidayRequestRepo
+- Tworzymy enpoint + get, add
+- Odpalamy aplikację  - http://localhost:8080/request
+- Odpalamy postmana robimy POST na /request - {"number":"1"}
+- Co widzimy? nie musieliśmy konfigurować DS, transaction managera, wszytko jest skonfigurowane za nas przez springa
+- jak to działa, wchodzimy w DataSourceAutoConfiguration, potem w EmbeddedDataSourceConfiguration 
+- spring.h2.console.enabled=true    jdbc:h2:mem:testdb  
+- pokazać jak on class condition i on bean condition
+- ServerProperties, DataSourceProperties
+- Dodajemy baner.txt + http://www.network-science.de/ascii/
+- Instalujemy ActiveMq 
+- > activemq.bat start
+- http://localhost:8161/admin/ - admin admin
+- dodajemy do pom : 
+
 ```
      <dependency>
             <groupId>org.springframework</groupId>
@@ -35,7 +36,7 @@
      spring.activemq.password=admin
 ```
 
-19. dodajemy jmsclient
+- dodajemy jmsclient
 
 ```
      @Component
@@ -62,13 +63,13 @@
      }
 ```
 
+- Dodajemy @EnableJMS
+- Tworzymy projekt server
+- Instalujemy mongo i robomongo 
+- Tworzymy własną reprezentacje holidayRequest
+- public interface HolidayRequestRepo extends MongoRepository<HolidayRequest, String> {
+- tworzymy jms receiver
 
-20. Dodajemy @EnableJMS
-21. Tworzymy projekt server
-22. Instalujemy mongo i robomongo 
-23. Tworzymy własną reprezentacje holidayRequest
-24. public interface HolidayRequestRepo extends MongoRepository<HolidayRequest, String> {
-25. tworzymy jms receiver
 ```
 @Component
 public class JmsReceiver {
@@ -92,8 +93,8 @@ public class JmsReceiver {
 }
 ```
 
-26. Podłączamy się do mongo baza test
-27. dodajemy HolidayRequestService z metodą count
+- Podłączamy się do mongo baza test
+- dodajemy HolidayRequestService z metodą count
 
 ```
 @Component
@@ -113,17 +114,14 @@ public class HolidayRequestServiceImpl implements HolidayRequestService {
     }
 }
 ```
-
-
-28. DODAJEMY ACURATOR
+- DODAJEMY ACURATOR
 ```
      <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
      </dependency>
 ```
-
-29. acurator 
+- acurator 
         1. /health
         2. /env
         3. /mappings
@@ -132,7 +130,7 @@ public class HolidayRequestServiceImpl implements HolidayRequestService {
         6. /beans
         7. /metrics
 
-30. Dodajemy własny healthIndicator :
+- Dodajemy własny healthIndicator :
 ```
 @Component
 public class MyHealthIndicator implements HealthIndicator{
@@ -143,8 +141,7 @@ public class MyHealthIndicator implements HealthIndicator{
 }
 ```
 
-
-31. Dodajemy opis aplikacji :
+- Dodajemy opis aplikacji :
 
 http://localhost:8080/info
 
@@ -152,16 +149,12 @@ info.app.name=Server
 info.app.description=My awesome service
 info.app.version=1.0.0
 
-
-
-32. Dodajemy własne metryki :
+- Dodajemy własne metryki :
 
 http://localhost:8080/metrics
 counterService.increment("services.system.holidayService.invoked");
 
-
-
-33. DODAJEMY SSH
+- DODAJEMY SSH
 
 http://www.crashub.org/1.3/reference.html
 
@@ -172,13 +165,13 @@ http://www.crashub.org/1.3/reference.html
      </dependency>
 ```
 
-34. putty >> user@localhost 2000 
+- putty >> user@localhost 2000 
 
-35. help
-36. beans
-37. jvm heap
-38. shell.auth.simple.user.password=123
-39. właśny command
+- help
+- beans
+- jvm heap
+- shell.auth.simple.user.password=123
+- właśny command
 ```
 package commands
 
@@ -200,7 +193,7 @@ class requestCounterCommand {
     }
 }
 ```
-40. spring dev tools 
+- spring dev tools 
 ```
      <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -208,7 +201,7 @@ class requestCounterCommand {
      </dependency>
 ```
 
-41. testowanie aplikacji :
+- testowanie aplikacji :
 ```
      @RunWith(SpringJUnit4ClassRunner.class)
      @SpringApplicationConfiguration(classes = ClientApplication.class)
@@ -231,8 +224,3 @@ class requestCounterCommand {
          }
      }
 ```
-
-
-
-
-
