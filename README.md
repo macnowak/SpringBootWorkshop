@@ -1,23 +1,23 @@
+<h2> Spring Boot Workshop </h2>
 
-    1. Tworzymy projekt SpringBootClient
-    2. Omówić application.properties, pom, parent pom, dependencies pom - pokazać że każda wersja przychodzi z określonymi wersjami zależności. Dzięki temu mamy pewność że wszystko działa i jest przetestowane ze sobą. 
-    3. Wystartować aplikację - omówić co widać przy starcie. 
-    4. Tworzymy klase HolidayRequest 
-    5. Tworzymy klasę holidayRequestRepo
-    6. Tworzymy enpoint + get, add
-    7. Odpalamy aplikację  - http://localhost:8080/request
-    8. Odpalamy postmana robimy POST na /request - {"number":"1"}
-    9. Co widzimy? nie musieliśmy konfigurować DS, transaction managera, wszytko jest skonfigurowane za nas przez springa
-    10. jak to działa, wchodzimy w DataSourceAutoConfiguration, potem w EmbeddedDataSourceConfiguration 
-    11. spring.h2.console.enabled=true    jdbc:h2:mem:testdb  
-    12. pokazać jak on class condition i on bean condition
-    13. ServerProperties, DataSourceProperties
-    14. Dodajemy baner.txt + http://www.network-science.de/ascii/
-    15. Instalujemy ActiveMq 
-    16. > activemq.bat start
-    17. http://localhost:8161/admin/ - admin admin
-    18. dodajemy do pom : 
-
+1. Tworzymy projekt SpringBootClient
+2. Omówić application.properties, pom, parent pom, dependencies pom - pokazać że każda wersja przychodzi z określonymi            wersjami zależności. Dzięki temu mamy pewność że wszystko działa i jest przetestowane ze sobą. 
+3. Wystartować aplikację - omówić co widać przy starcie. 
+4.  Tworzymy klase HolidayRequest 
+5. Tworzymy klasę holidayRequestRepo
+6. Tworzymy enpoint + get, add
+7. Odpalamy aplikację  - http://localhost:8080/request
+8. Odpalamy postmana robimy POST na /request - {"number":"1"}
+9. Co widzimy? nie musieliśmy konfigurować DS, transaction managera, wszytko jest skonfigurowane za nas przez springa
+10. jak to działa, wchodzimy w DataSourceAutoConfiguration, potem w EmbeddedDataSourceConfiguration 
+11. spring.h2.console.enabled=true    jdbc:h2:mem:testdb  
+12. pokazać jak on class condition i on bean condition
+13. ServerProperties, DataSourceProperties
+14. Dodajemy baner.txt + http://www.network-science.de/ascii/
+15. Instalujemy ActiveMq 
+16. > activemq.bat start
+17. http://localhost:8161/admin/ - admin admin
+18. dodajemy do pom : 
 
      <dependency>
             <groupId>org.springframework</groupId>
@@ -34,14 +34,10 @@
      spring.activemq.password=admin
 
 
-
-    1. dodajemy jmsclient
-
-
+19. dodajemy jmsclient
 
 @Component
 public class JmsClient {
-
     private JmsTemplate jmsTemplate;
     private ObjectMapper objectMapper;
 
@@ -51,11 +47,8 @@ public class JmsClient {
         this.jmsTemplate = jmsTemplate;
         this.objectMapper = objectMapper;
     }
-
     public void send(HolidayRequest request) throws JsonProcessingException {
-
         String message = objectMapper.writeValueAsString(request);
-
         MessageCreator messageCreator = new MessageCreator() {
             @Override
             public Message createMessage(Session session) throws JMSException {
@@ -65,31 +58,19 @@ public class JmsClient {
         System.out.println("Sending a new message.");
         jmsTemplate.send("mailbox-destination", messageCreator);
     }
-
-
 }
 
 
 
-    1. Dodajemy @EnableJMS
-
-
-
-
-    1. Tworzymy projekt server
-    2. Instalujemy mongo i robomongo 
-
-
-
-    1. Tworzymy własną reprezentacje holidayRequest
-
-    2. public interface HolidayRequestRepo extends MongoRepository<HolidayRequest, String> {
-    3. tworzymy jms receiver
-
+20. Dodajemy @EnableJMS
+21. Tworzymy projekt server
+22. Instalujemy mongo i robomongo 
+23. Tworzymy własną reprezentacje holidayRequest
+24. public interface HolidayRequestRepo extends MongoRepository<HolidayRequest, String> {
+25. tworzymy jms receiver
 
 @Component
 public class JmsReceiver {
-
     private ObjectMapper objectMapper;
     private HolidayRequestRepo holidayRequestRepo;
 
@@ -110,19 +91,20 @@ public class JmsReceiver {
 }
 
 
-    1. Podłączamy się do mongo baza test
-    2. dodajemy HolidayRequestService z metodą count
+26. Podłączamy się do mongo baza test
+27. dodajemy HolidayRequestService z metodą count
 
 
 @Component
 public class HolidayRequestServiceImpl implements HolidayRequestService {
-
     private final HolidayRequestRepo holidayRequestRepo;
+
 
     @Autowired
     public HolidayRequestServiceImpl(HolidayRequestRepo holidayRequestRepo) {
         this.holidayRequestRepo = holidayRequestRepo;
     }
+
 
     @Override
     public Long getRequestCount() {
@@ -133,9 +115,7 @@ public class HolidayRequestServiceImpl implements HolidayRequestService {
 
 
 
-    1. DODAJEMY ACURATOR
-
-
+28. DODAJEMY ACURATOR
 
      <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -143,8 +123,7 @@ public class HolidayRequestServiceImpl implements HolidayRequestService {
      </dependency>
 
 
-    1. acurator 
-
+29. acurator 
         1. /health
         2. /env
         3. /mappings
@@ -153,12 +132,7 @@ public class HolidayRequestServiceImpl implements HolidayRequestService {
         6. /beans
         7. /metrics
 
-
-
-
-    1. Dodajemy własny healthIndicator :
-
-
+30. Dodajemy własny healthIndicator :
 
 @Component
 public class MyHealthIndicator implements HealthIndicator{
@@ -170,9 +144,7 @@ public class MyHealthIndicator implements HealthIndicator{
 
 
 
-    1. Dodajemy opis aplikacji :
-
-
+31. Dodajemy opis aplikacji :
 
 http://localhost:8080/info
 
@@ -182,19 +154,17 @@ info.app.version=1.0.0
 
 
 
-    1. Dodajemy własne metryki :
-
+32. Dodajemy własne metryki :
 
 http://localhost:8080/metrics
 counterService.increment("services.system.holidayService.invoked");
 
 
 
-    1. DODAJEMY SSH
-
-
+33. DODAJEMY SSH
 
 http://www.crashub.org/1.3/reference.html
+
 
      <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -202,22 +172,13 @@ http://www.crashub.org/1.3/reference.html
      </dependency>
 
 
-    1. putty >> user@localhost 2000 
+34. putty >> user@localhost 2000 
 
-    2. help
-    3. beans
-    4. jvm heap
-
-
-
-    1. shell.auth.simple.user.password=123
-
-
-
-
-    1. właśny command
-
-
+35. help
+36. beans
+37. jvm heap
+38. shell.auth.simple.user.password=123
+39. właśny command
 
 package commands
 
@@ -229,6 +190,7 @@ import pl.decerto.workshop.HolidayRequestService
 
 class requestCounterCommand {
 
+
     @Usage("count requests")
     @Command
     def main(InvocationContext context) {
@@ -239,9 +201,7 @@ class requestCounterCommand {
 
 }
 
-
-
-    1. spring dev tools 
+40. spring dev tools 
 
      <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -249,9 +209,7 @@ class requestCounterCommand {
      </dependency>
 
 
-    1. testowanie aplikacji :
-
-
+41. testowanie aplikacji :
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @SpringApplicationConfiguration(classes = ClientApplication.class)
@@ -261,13 +219,14 @@ public class HolidayRequestEndpointTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
-
     private MockMvc mockMvc;
+
 
     @Before
     public void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
     }
+
 
     @Test
     public void testGetEndpoint() throws Exception {
